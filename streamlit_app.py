@@ -194,7 +194,7 @@ with center_col:
         analyzer_preview.NIGHT_OPERATOR_THRESHOLD = int(min_active_intervals)
 
         try:
-            _, stats_preview, _ = analyzer_preview.analyze(df_raw)
+            _, stats_preview, _ = analyzer_preview.analyze(df_for_analyze)
             all_ops = list(stats_preview["Оператор"])
         except Exception:
             all_ops = [op["name"] for op in operators_detected] if operators_detected else []
@@ -212,7 +212,7 @@ with center_col:
 
         analyzer_for_dates = NightShiftAnalyzer()
         try:
-            dfc_all = analyzer_for_dates.prepare_dataframe(df_raw)
+            dfc_all = analyzer_for_dates.prepare_dataframe(df_for_analyze)
             min_dt = dfc_all["start_datetime"].min().date()
             max_dt = dfc_all["start_datetime"].max().date()
             date_filter_available = True
@@ -243,7 +243,7 @@ with center_col:
 
             with st.spinner("Выполняется анализ..."):
                 try:
-                    dfc_full = analyzer.prepare_dataframe(df_raw)
+                    dfc_full = analyzer.prepare_dataframe(df_for_analyze)
 
                     if date_filter_available and date_from and date_to:
                         mask_date = (
@@ -258,7 +258,7 @@ with center_col:
                         # небольшой локальный анализ по фильтрованному df
                         activity_df, stats_df, calls_df = analyzer.analyze(dfc_filtered)
                     else:
-                        activity_df, stats_df, calls_df = analyzer.analyze(df_raw)
+                        activity_df, stats_df, calls_df = analyzer.analyze(df_for_analyze)
 
                     # фильтрация по выбранным операторам
                     ops_available = [op for op in selected_ops if op in activity_df.columns]
