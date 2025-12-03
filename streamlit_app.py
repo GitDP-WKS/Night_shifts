@@ -131,39 +131,39 @@ class IntelligentFileLoader:
         self.operator_finder = EnhancedOperatorFinder()
 
     @st.cache_data(show_spinner=False)
-    def load_file(self, uploaded) -> Tuple[pd.DataFrame, List[Dict[str, str]]]:
+    def load_file(_self, _uploaded) -> Tuple[pd.DataFrame, List[Dict[str, str]]]:
         """
         Загружает файл — xlsx/xls/csv/html/txt.
         Возвращает DataFrame и список найденных операторов (примерных).
         """
-        name = uploaded.name.lower()
+        name = _uploaded.name.lower()
         try:
             if name.endswith((".xlsx", ".xls")):
-                df = pd.read_excel(uploaded)
+                df = pd.read_excel(_uploaded)
             elif name.endswith(".csv"):
-                df = pd.read_csv(uploaded, sep=None, engine="python", encoding="utf-8", on_bad_lines="skip")
+                df = pd.read_csv(_uploaded, sep=None, engine="python", encoding="utf-8", on_bad_lines="skip")
             elif name.endswith((".html", ".htm")) and BeautifulSoup:
-                html = uploaded.read().decode("utf-8", errors="ignore")
-                df = self._parse_html(html)
+                html = _uploaded.read().decode("utf-8", errors="ignore")
+                df = _self._parse_html(html)
             else:
-                text = uploaded.read().decode("utf-8", errors="ignore")
+                text = _uploaded.read().decode("utf-8", errors="ignore")
                 lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
                 df = pd.DataFrame({"text": lines})
         except Exception as e:
             logger.warning("Ошибка при чтении основного формата: %s — пытаем fallback", e)
             try:
-                uploaded.seek(0)
+                _uploaded.seek(0)
             except Exception:
                 pass
             try:
-                content = uploaded.read().decode("utf-8", errors="ignore")
+                content = _uploaded.read().decode("utf-8", errors="ignore")
                 lines = [ln.strip() for ln in content.splitlines() if ln.strip()]
                 df = pd.DataFrame({"text": lines})
             except Exception as ee:
                 logger.error("Не удалось прочитать файл: %s", ee)
                 raise
 
-        operators = self.operator_finder.find_operators_in_dataframe(df)
+        operators = _self.operator_finder.find_operators_in_dataframe(df)
         return df, operators
 
     def _parse_html(self, html: str) -> pd.DataFrame:
