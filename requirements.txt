@@ -1,0 +1,6 @@
+streamlit>=1.18
+pandas>=1.5
+openpyxl>=3.0
+beautifulsoup4>=4.12
+plotly>=5.15
+python-dateutil>=2.8
